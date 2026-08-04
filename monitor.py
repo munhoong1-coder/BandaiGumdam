@@ -1,82 +1,67 @@
 import requests
-import json
 import os
 from datetime import datetime
 
 
+# 从 GitHub Secrets 获取
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 
 def send_telegram(message):
 
+    print("======================")
+    print("Telegram Debug")
+    print("======================")
+
+    # 检查 Secret 有没有传进来
+    if TOKEN:
+        print("TOKEN: OK")
+    else:
+        print("TOKEN: MISSING")
+
+    print("CHAT_ID:", CHAT_ID)
+
+
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
 
     data = {
         "chat_id": CHAT_ID,
         "text": message
     }
 
-    requests.post(url, data=data)
-
-
-
-def check_product(product):
-
-    shop_id = product["shop_id"]
-    item_id = product["item_id"]
-
-    api = (
-        f"https://shopee.com.my/api/v4/item/get?"
-        f"itemid={item_id}&shopid={shop_id}"
-    )
 
     try:
-        r = requests.get(api,
-        headers={
-            "User-Agent":
-            "Mozilla/5.0"
-        })
 
-        data = r.json()
+        response = requests.post(
+            url,
+            data=data
+        )
 
-        item = data["data"]["item"]
 
-        stock = item.get("stock",0)
-
-        return stock > 0
+        print("Telegram API Response:")
+        print(response.text)
 
 
     except Exception as e:
+
+        print("ERROR:")
         print(e)
-        return False
 
 
 
-with open("products.json") as f:
-    products=json.load(f)
+# 测试讯息
 
+message = f"""
+🤖 Shopee Restock Bot Test
 
+Status:
+GitHub Actions Connected ✅
 
-for product in products:
-
-    available = check_product(product)
-
-
-    if available:
-
-        msg=f"""
-🚨 SHOPEE RESTOCK ALERT 🚨
-
-商品:
-{product['name']}
-
-状态:
-AVAILABLE ✅
-
-时间:
+Time:
 {datetime.now()}
-
-链接:
-{product['url']}
 """
+
+
+send_telegram(message)
