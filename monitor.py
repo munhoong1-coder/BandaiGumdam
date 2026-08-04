@@ -82,7 +82,6 @@ AVAILABLE ✅
 """
 
         send_telegram(msg)
-
 send_telegram("🤖 Shopee Bot Test Message")
 
 
