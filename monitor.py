@@ -82,3 +82,10 @@ AVAILABLE ✅
 """
 
         send_telegram(msg)
+
+send_telegram("🤖 Shopee Bot Test Message")
+
+
+for product in products:
+
+    available = check_product(product)
