@@ -1,0 +1,27 @@
+name: Shopee Stock Monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # 每 15 分钟自动运行一次
+  workflow_dispatch:        # 支持手动点按钮触发
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Stock Check
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: python main.py
