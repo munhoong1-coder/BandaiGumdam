@@ -28,7 +28,7 @@ jobs:
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-        run: python main.py  # 如果你的文件名是 main.py，这里就写 python main.py
+        run: python monitor.py  # 如果你的文件名是 main.py，这里就写 python main.py
 
       - name: Commit and Push stock_state.json
         run: |
