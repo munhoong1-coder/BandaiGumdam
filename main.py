@@ -34,43 +34,29 @@ def check_stock():
             stock = res_data.get("stock", 0)
             models = res_data.get("models", [])
             
-            # 整理出完整的规格库存 JSON 结构
+            # 判断是否有货（true / false）
+            is_in_stock = stock > 0
+            
             item_info = {
                 "itemid": item["itemid"],
                 "shopid": item["shopid"],
                 "title": title,
+                "in_stock": is_in_stock,  # 有货为 true，没货为 false
                 "total_stock": stock,
-                "models": [
-                    {
-                        "model_id": m.get("modelid"),
-                        "name": m.get("name"),
-                        "price": m.get("price") / 100000 if m.get("price") else 0,
-                        "stock": m.get("stock")
-                    } for m in models
-                ]
+                "url": f"https://shopee.com.my/product/{item['shopid']}/{item['itemid']}"
             }
             stock_state.append(item_info)
 
-            # 有库存时发送 Telegram 通知
-            available_models = [m['name'] for m in models if m.get("stock", 0) > 0] if models else []
-            if stock > 0:
-                item_url = f"https://shopee.com.my/product/{item['shopid']}/{item['itemid']}"
-                msg = f"🚨 *Shopee 补货通知！*\n\n*商品:* {title}\n*总库存:* {stock}\n"
-                if available_models:
-                    msg += f"*可用规格:* {', '.join(available_models)}\n"
-                msg += f"\n[👉 立即点击购买]({item_url})"
-                send_telegram_notification(msg)
+            # 有货时发送通知
+            if is_in_stock:
+                send_telegram_notification(f"🚨 *Shopee 补货通知！*\n\n*商品:* {title}\n*库存:* {stock}\n\n[👉 点击购买]({item_info['url']})")
 
         except Exception as e:
             print(f"检查商品 {item['itemid']} 出错: {e}")
 
-    # 保存 JSON 文件到本地
+    # 保存 JSON 到当前目录
     with open("stock_state.json", "w", encoding="utf-8") as f:
         json.dump(stock_state, f, ensure_ascii=False, indent=2)
-
-    # 打印到 GitHub Actions 日志中方便即时排查
-    print("\n=== 当前库存 JSON 数据 ===")
-    print(json.dumps(stock_state, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
     check_stock()
