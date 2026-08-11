@@ -3,8 +3,8 @@
     "itemid": 47515367410,
     "shopid": 435791627,
     "title": "商品 1",
-    "in_stock": true,
-    "total_stock": 22,
+    "in_stock": false,
+    "total_stock": 0,
     "url": "https://shopee.com.my/product/435791627/47515367410"
   },
   {
